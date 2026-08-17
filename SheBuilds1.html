@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Expense Calculator</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px gray;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        .summary p {
+            font-size: 17px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Personal Expense Calculator</h1>
+
+    <h2>Income</h2>
+
+    <input type="number" id="income" placeholder="Enter your monthly income">
+
+    <h2>Add Expense</h2>
+
+    <input type="text" id="expenseName" placeholder="Enter expense name">
+
+    <input type="number" id="expenseAmount" placeholder="Enter expense amount">
+
+    <select id="expenseCategory">
+        <option value="Food">Food</option>
+        <option value="Travel">Travel</option>
+        <option value="Education">Education</option>
+        <option value="Shopping">Shopping</option>
+        <option value="Bills">Bills</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <button onclick="addExpense()">Add Expense</button>
+
+
+    <h2>Expense List</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Expense</th>
+                <th>Category</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+
+        <tbody id="expenseList">
+        </tbody>
+    </table>
+
+
+    <button onclick="calculateSummary()">
+        Calculate Summary
+    </button>
+
+
+    <div class="summary">
+
+        <h2>Summary Report</h2>
+
+        <p>
+            Income:
+            ₹<span id="totalIncome">0</span>
+        </p>
+
+        <p>
+            Total Expenses:
+            ₹<span id="totalExpense">0</span>
+        </p>
+
+        <p>
+            Savings:
+            ₹<span id="savings">0</span>
+        </p>
+
+        <h3>Category-wise Expenses</h3>
+
+        <p>Food: ₹<span id="food">0</span></p>
+
+        <p>Travel: ₹<span id="travel">0</span></p>
+
+        <p>Education: ₹<span id="education">0</span></p>
+
+        <p>Shopping: ₹<span id="shopping">0</span></p>
+
+        <p>Bills: ₹<span id="bills">0</span></p>
+
+        <p>Other: ₹<span id="other">0</span></p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    // Array to store expenses
+    let expenses = [];
+
+
+    // Function to add expense
+    function addExpense() {
+
+        let name = document.getElementById("expenseName").value;
+
+        let amount = Number(
+            document.getElementById("expenseAmount").value
+        );
+
+        let category =
+            document.getElementById("expenseCategory").value;
+
+
+        // Condition to check valid input
+        if (name === "" || amount <= 0) {
+
+            alert("Please enter valid expense details.");
+
+            return;
+        }
+
+
+        // Create expense object
+        let expense = {
+
+            name: name,
+
+            amount: amount,
+
+            category: category
+
+        };
+
+
+        // Add expense to array
+        expenses.push(expense);
+
+
+        // Display expenses
+        displayExpenses();
+
+
+        // Clear input fields
+        document.getElementById("expenseName").value = "";
+
+        document.getElementById("expenseAmount").value = "";
+
+    }
+
+
+
+    // Function to display expenses
+    function displayExpenses() {
+
+        let expenseList =
+            document.getElementById("expenseList");
+
+
+        expenseList.innerHTML = "";
+
+
+        // Loop through expenses
+        for (let i = 0; i < expenses.length; i++) {
+
+            let row = `
+                <tr>
+                    <td>${expenses[i].name}</td>
+                    <td>${expenses[i].category}</td>
+                    <td>₹${expenses[i].amount}</td>
+                </tr>
+            `;
+
+
+            expenseList.innerHTML += row;
+        }
+    }
+
+
+
+    // Function to calculate summary
+    function calculateSummary() {
+
+        let income = Number(
+            document.getElementById("income").value
+        );
+
+
+        // Check income
+        if (income <= 0) {
+
+            alert("Please enter your income.");
+
+            return;
+        }
+
+
+        let totalExpense = 0;
+
+
+        // Category variables
+        let food = 0;
+        let travel = 0;
+        let education = 0;
+        let shopping = 0;
+        let bills = 0;
+        let other = 0;
+
+
+        // Loop through all expenses
+        for (let i = 0; i < expenses.length; i++) {
+
+            totalExpense += expenses[i].amount;
+
+
+            // Categorize expenses
+            if (expenses[i].category === "Food") {
+
+                food += expenses[i].amount;
+
+            }
+            else if (expenses[i].category === "Travel") {
+
+                travel += expenses[i].amount;
+
+            }
+            else if (expenses[i].category === "Education") {
+
+                education += expenses[i].amount;
+
+            }
+            else if (expenses[i].category === "Shopping") {
+
+                shopping += expenses[i].amount;
+
+            }
+            else if (expenses[i].category === "Bills") {
+
+                bills += expenses[i].amount;
+
+            }
+            else {
+
+                other += expenses[i].amount;
+            }
+        }
+
+
+        // Calculate savings
+        let savings = income - totalExpense;
+
+
+        // Display results
+        document.getElementById("totalIncome").innerText = income;
+
+        document.getElementById("totalExpense").innerText =
+            totalExpense;
+
+        document.getElementById("savings").innerText =
+            savings;
+
+
+        // Display category totals
+        document.getElementById("food").innerText = food;
+
+        document.getElementById("travel").innerText = travel;
+
+        document.getElementById("education").innerText =
+            education;
+
+        document.getElementById("shopping").innerText =
+            shopping;
+
+        document.getElementById("bills").innerText = bills;
+
+        document.getElementById("other").innerText = other;
+
+    }
+
+</script>
+
+</body>
+</html>
